@@ -48,7 +48,7 @@ public class Parser {
         if(this.next < this.tokens.size() && this.tokens.get(this.next).equals(id)) {
             
             // Codigo para el Shunting Yard Algorithm
-            /*
+            
             if (id == Token.NUMBER) {
 				// Encontramos un numero
 				// Debemos guardarlo en el stack de operandos
@@ -67,7 +67,7 @@ public class Parser {
 				// Que pushOp haga el trabajo, no quiero hacerlo yo aqui
 				pushOp( this.tokens.get(this.next) );
 			}
-			*/
+			
 
             this.next++;
             return true;
@@ -129,13 +129,124 @@ public class Parser {
 
     }
 
+
+    /* TODO: sus otras funciones aqui */
+    ...
     private boolean S() {
         return E() && term(Token.SEMI);
     }
-
+                
     private boolean E() {
-        return false;
+        return E1();
     }
-
-    /* TODO: sus otras funciones aqui */
+                
+    private boolean E1() {
+        return T() && A();
+    }
+                
+    private boolean T() {
+        return T1();
+    }
+                
+    private boolean T1() {
+        return F() && B();
+    }
+                
+    private boolean A() {
+        int save = next;
+        if (A1()) {
+            return true;
+        }
+        next = save;
+        if (A2()) {
+            return true;
+        }
+        return true;
+    }
+                
+    private boolean A1() {
+        return term(Token.PLUS) && T() && A();
+    }
+                
+    private boolean A2() {
+        return term(Token.MINUS) && T() && A();
+    }
+                
+    private boolean B() {
+        int save = next;
+        if (B1()) {
+            return true;
+        }
+        next = save;
+        if (B2()) {
+            return true;
+        }
+        next = save;
+        if (B3()) {
+            return true;
+        }
+        return true;
+    }
+                
+    private boolean B1() {
+        return term(Token.MULT) && F() && B();
+    }
+                
+    private boolean B2() {
+        return term(Token.DIV) && F() && B();
+    }
+                
+    private boolean B3() {
+        return term(Token.MOD) && F() && B();
+    }
+                
+    private boolean F() {
+        return F1();
+    }
+                
+    private boolean F1() {
+        return P() && C();
+    }
+                
+    private boolean C() {
+        int save = next;
+        if (C1()) {
+            return true;
+        }
+        next = save;
+        return true;
+    }
+                
+    private boolean C1() {
+        return term(Token.EXP) && F();
+    }
+                
+    private boolean P() {
+        int save = next;
+        if (P1()) {
+            return true;
+        }
+        next = save;
+        if (P2()) {
+            return true;
+        }
+        next = save;
+        return P3();
+    }
+                
+    private boolean P1() {
+        return term(Token.LPAREN) && E() && term(Token.RPAREN);
+    }
+                
+    private boolean P2() {
+        return term(Token.UNARY) && P();
+    }
+                
+    private boolean P3() {
+        return N();
+    }
+                
+    private boolean N() {
+        return term(Token.NUMBER);
+    }
 }
